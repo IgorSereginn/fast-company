@@ -1,35 +1,49 @@
 import React from "react";
 import PropTypes from "prop-types";
-const GroupList = ({ items, valueProperty, contentProperty, onItemSelect, selectedItem }) => {
-    const ifProfArray = (items) => {
-        return items.map((item) => {
-            return (
+
+const GroupList = ({
+    items,
+    valueProperty,
+    contentProperty,
+    onItemSelect,
+    selectedItem
+}) => {
+    if (!Array.isArray(items)) {
+        return (
+            <ul className="list-group">
+                {Object.keys(items).map((item) => (
+                    <li
+                        key={items[item][valueProperty]}
+                        className={
+                            "list-group-item" +
+                            (items[item] === selectedItem ? " active" : "")
+                        }
+                        onClick={() => onItemSelect(items[item])}
+                        role="button"
+                    >
+                        {items[item][contentProperty]}
+                    </li>
+                ))}
+            </ul>
+        );
+    }
+    return (
+        <ul className="list-group">
+            {items.map((item) => (
                 <li
                     key={item[valueProperty]}
-                    className={"list-group-item" + (item === selectedItem ? " active" : "")}
-                    role="button"
+                    className={
+                        "list-group-item" +
+                        (item === selectedItem ? " active" : "")
+                    }
                     onClick={() => onItemSelect(item)}
+                    role="button"
                 >
                     {item[contentProperty]}
                 </li>
-            );
-        });
-    };
-    const ifProfObject = (items) => {
-        return Object.keys(items).map((item) => {
-            return (
-                <li
-                    key={items[item][valueProperty]}
-                    className={"list-group-item" + (items[item] === selectedItem ? " active" : "")}
-                    role="button"
-                    onClick={() => onItemSelect(items[item])}
-                >
-                    {items[item][contentProperty]}
-                </li>
-            );
-        });
-    };
-    return <ul className = "list-group">{Array.isArray(items) ? ifProfArray(items) : ifProfObject(items) }</ul>;
+            ))}
+        </ul>
+    );
 };
 GroupList.defaultProps = {
     valueProperty: "_id",
@@ -39,7 +53,8 @@ GroupList.propTypes = {
     items: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     valueProperty: PropTypes.string.isRequired,
     contentProperty: PropTypes.string.isRequired,
-    onItemSelect: PropTypes.func.isRequired,
-    selectedItem: PropTypes.object.isRequired
+    onItemSelect: PropTypes.func,
+    selectedItem: PropTypes.object
 };
+
 export default GroupList;
